@@ -2,6 +2,7 @@ package com.devsuperior.dsmeta.services;
 
 import java.util.Optional;
 
+import com.devsuperior.dsmeta.projections.SaleProjection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,6 @@ public class SaleService {
 	public SaleMinDTO findById(Long id) {
 		Optional<Sale> result = repository.findById(id);
 		Sale entity = result.get();
-		return new SaleMinDTO(entity);
+		return new SaleMinDTO ((SaleProjection) entity);
 	}
 }
