@@ -3,8 +3,8 @@ package com.devsuperior.dsmeta.projections;
 import java.time.LocalDate;
 
 public interface SaleProjection {
-    Long getId();
-    LocalDate getDate();
+
+    String getSellerName();
     Double getAmount();
-    String getName();
+
 }

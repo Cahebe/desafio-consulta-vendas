@@ -1,6 +1,6 @@
 package com.devsuperior.dsmeta.repositories;
 
-
+import com.devsuperior.dsmeta.dto.SaleMinDTO;
 import com.devsuperior.dsmeta.projections.SaleProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,11 +10,21 @@ import com.devsuperior.dsmeta.entities.Sale;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
-
+import java.util.List;
 
 public interface SaleRepository extends JpaRepository<Sale, Long> {
-    @Query(nativeQuery = true, value = "SELECT obj " +
+    @Query("SELECT new com.devsuperior.dsmeta.dto.SaleMinDTO(obj.id, obj.amount, obj.date, obj.seller.name) " +
             "FROM Sale obj " +
-            "WHERE obj.name LIKE :name ")
-    Page<SaleProjection> report(String name, LocalDate minDate, LocalDate maxDate, Pageable pageable);
+            "WHERE obj.date >= :minDate " +
+            "AND obj.date <= :maxDate " +
+            "AND UPPER(obj.seller.name) LIKE UPPER(CONCAT('%', :name, '%'))")
+    Page<SaleMinDTO> getReport(LocalDate minDate, LocalDate maxDate, String name, Pageable pageable);
+
+    @Query("SELECT new com.devsuperior.dsmeta.dto.SaleMinDTO(obj.seller.name, SUM(obj.amount)) " +
+            "FROM Sale obj " +
+            "WHERE obj.date >= :minDate " +
+            "AND obj.date <= :maxDate " +
+            "GROUP BY obj.seller.name")
+    List<SaleProjection> getSummary(LocalDate minDate, LocalDate maxDate);
+
 }
